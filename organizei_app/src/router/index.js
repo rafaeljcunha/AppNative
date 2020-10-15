@@ -6,8 +6,10 @@ import {
   createNavigationReducer,
 } from 'react-navigation-redux-helpers';
 
-import {NavigationContainer, NavigationAction} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationActions} from 'react-navigation';
+
 import {connect} from 'react-redux';
 import AppComponent from '../../App';
 
@@ -57,7 +59,7 @@ class Router extends PureComponent {
     //   return true;
     // }
     if (currentScreen !== 'Home') {
-      this.props.dispatch(NavigationAction.back());
+      this.props.dispatch(NavigationActions.back());
       return true;
     }
     return false;
