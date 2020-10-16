@@ -1,65 +1,33 @@
 import React, {PureComponent} from 'react';
-import {BackHandler} from 'react-native';
-import {
-  reduxifyNavigator,
-  createReactNavigationReduxMiddleware,
-  createNavigationReducer,
-} from 'react-navigation-redux-helpers';
+import {BackHandler, Text} from 'react-native';
+// import Loading from '@/components/Loading';
+import Dva from '../utils/dva';
+import Navigator from '../utils/navigator';
+import AppNavigator from '../router/navigator/AppNavigator';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationActions} from 'react-navigation';
+const {App} = Navigator;
+const AppContainer = App(AppNavigator);
 
-import {connect} from 'react-redux';
-import AppComponent from '../../App';
+/**
+ * 整个路由管理
+ */
 
-const Stack = createStackNavigator();
-
-function AppNavigator() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={AppComponent} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
-export const routerReducer = createNavigationReducer(AppNavigator);
-
-export const routerMiddleware = createReactNavigationReduxMiddleware(
-  'root',
-  (state) => state.router,
-);
-
-const App = reduxifyNavigator(AppNavigator, 'root');
-
-function getActiveRouteName(navigationState) {
-  if (!navigationState) {
-    return null;
-  }
-  const route = navigationState.routes[navigationState.index];
-  if (route.routes) {
-    return getActiveRouteName(route);
-  }
-  return route.routeName;
-}
-
-class Router extends PureComponent {
-  componentWillMount() {
+class Routers extends PureComponent {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandle);
   }
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backHandle);
   }
-
   backHandle = () => {
-    const currentScreen = getActiveRouteName(this.props.router);
-    // if (currentScreen === 'Login') {
-    //   return true;
-    // }
+    const currentScreen = Navigator.getActiveRouteName(this.props.router);
+    if (currentScreen === 'Login') {
+      return true;
+    }
     if (currentScreen !== 'Home') {
-      this.props.dispatch(NavigationActions.back());
+      this.props.dispatch(Navigator.back());
       return true;
     }
     return false;
@@ -68,11 +36,10 @@ class Router extends PureComponent {
   render() {
     const {app, dispatch, router} = this.props;
     if (app.loading) {
-      return <p>Carregando</p>;
+      return <Text>Carregando</Text>;
     }
-
-    return <App dispatch={dispatch} state={router} />;
+    return <AppContainer dispatch={dispatch} state={router} />;
   }
 }
 
-export default connect(({app, router}) => ({app, router}))(Router);
+export default Dva.connect(({app, router}) => ({app, router}))(Routers);

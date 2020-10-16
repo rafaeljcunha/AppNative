@@ -2,7 +2,7 @@ export default {
   namespace: 'app',
   state: {
     login: false,
-    loading: true,
+    loading: false,
     fetching: false,
   },
   reducers: {

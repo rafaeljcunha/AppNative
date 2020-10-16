@@ -1,23 +1,24 @@
-import 'react-native-gesture-handler';
-
 import React from 'react';
-import {name as appName} from '../app.json';
 import {AppRegistry} from 'react-native';
+import models from './models';
+import Routers from './router';
+import Dva from './utils/dva';
+import Navigator from './utils/navigator';
+import {name as appName} from '../app.json';
+import AppNavigator from './router/navigator/AppNavigator';
 
-import dva from './utils/dva.js';
-import Router, {routerMiddleware, routerReducer} from './router/index.js';
-import appModel from './models/app.js';
+const {routerMiddleware, routerReducer} = Navigator;
 
-const app = dva({
+const app = Dva.init({
   initialState: {},
-  models: [appModel],
-  extraReducers: {router: routerReducer},
+  models,
+  extraReducers: {router: routerReducer(AppNavigator)},
   onAction: [routerMiddleware],
   onError(e) {
     console.log('onError', e);
   },
 });
-console.log(app);
-const App = app.start(<Router />);
+
+const App = app.start(<Routers />);
 
 AppRegistry.registerComponent(appName, () => App);
