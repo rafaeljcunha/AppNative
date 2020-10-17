@@ -3,7 +3,6 @@ import {StyleSheet, TextInput} from 'react-native';
 import theme from '../../theme';
 
 export default function Input(props) {
-  console.log(!!props.type);
   return (
     <TextInput
       {...props}
