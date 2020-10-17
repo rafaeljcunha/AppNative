@@ -10,6 +10,9 @@ const AppContainer = App(AppNavigator);
 function Routers({dispatch, router}) {
   const backHandle = useCallback(() => {
     const currentScreen = Navigator.getActiveRouteName(router);
+    // if (currentScreen === 'MainEntrance') {
+    //   return true;
+    // }
     if (currentScreen !== 'Home') {
       dispatch(Navigator.back());
       return true;

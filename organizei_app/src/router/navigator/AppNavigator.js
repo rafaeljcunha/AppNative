@@ -1,7 +1,7 @@
-import {Animated, Easing} from 'react-native';
 import Navigator from '../../utils/navigator';
 import Home from '../../screens/Home/index';
 import Login from '../../screens/Login/index';
+import MainEntrance from '../../screens/MainEntrance/index';
 import Register from '../../screens/Register/index';
 import Camera from '../../components/RNCamera/index';
 import LoadingRegister from '../../components/LoadingEnterRegister/index';
@@ -19,6 +19,10 @@ const AppNavigator = Navigator.createStackNavigator({
   },
   LoadingRegister: {
     screen: LoadingRegister,
+    navigationOptions: {title: '', header: () => false},
+  },
+  MainEntrance: {
+    screen: MainEntrance,
     navigationOptions: {title: '', header: () => false},
   },
 });

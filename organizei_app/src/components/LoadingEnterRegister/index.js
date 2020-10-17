@@ -1,9 +1,17 @@
-import React, {Fragment, useCallback, useEffect, useMemo} from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import logo from '../../assets/images/logo.png';
 import homemCelular from '../../assets/images/homem_celular_escuro.png';
 import engrenagem from '../../assets/images/engrenagem_carregando.png';
 import engrenagemCelular from '../../assets/images/engrenagem_celular.png';
+import checkedImage from '../../assets/images/checked.png';
 import {
   Image,
   SafeAreaView,
@@ -15,10 +23,42 @@ import {
   Easing,
 } from 'react-native';
 import theme from '../../theme';
-// import LinearGradient from 'react-native-linear-gradient';
 
-export default function LoadingRegister() {
+const contentProgressBar = ({count, widthProgress}) => ({
+  height: 8,
+  borderRadius: 10,
+  width: widthProgress,
+  backgroundColor: theme.colors.orange.main,
+  borderRightWidth: count < 90 && count > 0 ? 2 : 0,
+  borderTopRightRadius: count < 90 && count > 0 ? 0 : 10,
+  borderBottomEndRadius: count < 90 && count > 0 ? 0 : 10,
+  borderRightColor:
+    count < 90 && count > 0 ? theme.colors.black.main : 'transparent',
+});
+
+const waitingEngrenagem = ({spinInterpolate}) => ({
+  ...styles.waitingImagem,
+  transform: [{rotate: spinInterpolate}],
+});
+
+const waitingEngrenagemCelular = ({spinInterpolate}) => ({
+  ...styles.engrenagemCelularImage,
+  transform: [{rotate: spinInterpolate}],
+});
+
+export default function LoadingRegister({navigation}) {
+  const [widthProgress, setWidthProgress] = useState(0);
+  const [count, setCount] = useState(0);
   const spinValue = useMemo(() => new Animated.Value(0), []);
+  const opacityImage = useMemo(() => new Animated.Value(0), []);
+
+  const onLoad = () => {
+    Animated.timing(opacityImage, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  };
 
   useEffect(() => {
     spinValue;
@@ -38,9 +78,33 @@ export default function LoadingRegister() {
     spin();
   }, [spin]);
 
-  const spinInter = spinValue.interpolate({
+  useEffect(() => {
+    if (count <= 90) {
+      setInterval(() => {
+        setCount((prev) => prev + 10);
+      }, 800);
+      setWidthProgress(count);
+    } else {
+      return () => null;
+    }
+  }, [count]);
+
+  useEffect(() => {
+    if (count === 90) {
+      setTimeout(() => {
+        navigation.navigate('MainEntrance');
+      }, 2000);
+    }
+  }, [count, navigation]);
+
+  const spinInterpolate = spinValue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
+  });
+
+  const opacityInterpolate = opacityImage.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.85, 1],
   });
 
   return (
@@ -61,33 +125,66 @@ export default function LoadingRegister() {
             resizeMode="contain"
           />
           <View style={styles.celularContainer}>
-            <Animated.Image
-              source={engrenagemCelular}
-              style={{
-                ...styles.engrenagemCelularImage,
-                transform: [{rotate: spinInter}],
-              }}
-            />
-            <Text
-              style={{
-                color: 'white',
-                zIndex: 1,
-                fontSize: theme.text.width[12],
-                position: 'absolute',
-                top: 15,
-              }}>
-              Aguarde...
-            </Text>
+            {count < 90 ? (
+              <Animated.Image
+                fadeDuration={3000}
+                source={engrenagemCelular}
+                style={
+                  count < 90
+                    ? waitingEngrenagemCelular({spinInterpolate})
+                    : styles.engrenagemCelularImage
+                }
+              />
+            ) : (
+              <Animated.Image
+                onLoad={onLoad}
+                source={checkedImage}
+                style={{
+                  ...styles.engrenagemCelularImage,
+                  opacity: opacityImage,
+                  transform: [{scale: opacityInterpolate}],
+                }}
+              />
+            )}
+            {count < 90 ? (
+              <Text style={styles.waitingMobileText}>Aguarde...</Text>
+            ) : (
+              <Animated.Text
+                style={{
+                  ...styles.waitingMobileText,
+                  opacity: opacityImage,
+                  transform: [{scale: opacityInterpolate}],
+                }}>
+                Carregado
+              </Animated.Text>
+            )}
+            <View style={styles.progressBar}>
+              <View style={contentProgressBar({count, widthProgress})} />
+            </View>
           </View>
           <View style={styles.waitingContainer}>
-            <Text style={styles.waitingText}>Carregando dados</Text>
-            <Animated.Image
-              style={{
-                ...styles.waitingImagem,
-                transform: [{rotate: spinInter}],
-              }}
-              source={engrenagem}
-            />
+            {count < 90 ? (
+              <Fragment>
+                <Text style={styles.waitingText}>Carregando dados</Text>
+                <Animated.Image
+                  style={
+                    count < 90
+                      ? waitingEngrenagem({spinInterpolate})
+                      : styles.waitingImagem
+                  }
+                  source={engrenagem}
+                />
+              </Fragment>
+            ) : (
+              <Animated.Text
+                style={{
+                  ...styles.waitingText,
+                  opacity: opacityImage,
+                  transform: [{scale: opacityInterpolate}],
+                }}>
+                Carregado com sucesso
+              </Animated.Text>
+            )}
           </View>
         </View>
       </SafeAreaView>
@@ -150,5 +247,22 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     position: 'absolute',
+  },
+  waitingMobileText: {
+    color: 'white',
+    zIndex: 1,
+    fontSize: theme.text.width[12],
+    position: 'absolute',
+    top: 15,
+  },
+  progressBar: {
+    width: 90,
+    height: 8,
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 40,
+    borderRadius: 10,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
 });
