@@ -47,7 +47,7 @@ export default function Login({navigation}) {
                 style={styles.button}
                 title="Comece a organizar"
                 textStyle={styles.textStyle}
-                onClick={() => console.log('clicou entrou')}
+                onClick={() => navigation.navigate('MainEntrance')}
                 opacity={0.1}
               />
             </View>
