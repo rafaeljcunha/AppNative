@@ -70,4 +70,5 @@ export default {
     color: theme.colors.white.main,
     fontWeight: theme.text.fontWeight.bold,
   },
+  camImage: {width: 104, height: 104, borderRadius: 104},
 };

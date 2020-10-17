@@ -1,3 +1,3 @@
-import app from './app';
+import camera from './camera';
 
-export default [app];
+export default [camera];

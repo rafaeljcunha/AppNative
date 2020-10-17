@@ -15,8 +15,13 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Icon from 'react-native-vector-icons/Feather';
 import stylesData from './styles';
+import {connect} from '../../utils/dva';
 
-export default function Register({navigation}) {
+function Register({navigation, cameraModel: {url}}) {
+  const openCamera = () => {
+    navigation.navigate('Camera', {backRouter: 'Register'});
+  };
+
   return (
     <Fragment>
       <StatusBar
@@ -32,41 +37,50 @@ export default function Register({navigation}) {
           <View style={styles.formContainer}>
             <View style={styles.cloudContainer}>
               <Image source={nuvemBranca} style={styles.cloudImage} />
-              <Button
-                style={styles.picture}
-                icon={
-                  <Icon
-                    name="camera"
-                    size={40}
-                    color={theme.colors.orange.main}
-                  />
-                }
-              />
+              {url !== null ? (
+                <Button
+                  style={styles.picture}
+                  onClick={openCamera}
+                  icon={<Image source={url} style={styles.camImage} />}
+                />
+              ) : (
+                <Button
+                  style={styles.picture}
+                  onClick={openCamera}
+                  icon={
+                    <Icon
+                      name="camera"
+                      size={40}
+                      color={theme.colors.orange.main}
+                    />
+                  }
+                />
+              )}
             </View>
             <View style={styles.formData}>
               <Input
                 placeholder="Nome de Usuário"
-                placeholderTextColor={theme.colors.grey[75]}
+                placeholderTextColor={theme.colors.grey[95]}
               />
               <Input
                 placeholder="E-mail de usuário"
-                placeholderTextColor={theme.colors.grey[75]}
+                placeholderTextColor={theme.colors.grey[95]}
               />
               <Input
                 placeholder="Senha"
                 password
-                placeholderTextColor={theme.colors.grey[75]}
+                placeholderTextColor={theme.colors.grey[95]}
               />
               <Input
                 placeholder="Confirme sua senha"
                 password
-                placeholderTextColor={theme.colors.grey[75]}
+                placeholderTextColor={theme.colors.grey[95]}
               />
               <Button
                 style={styles.button}
                 title="Começar a organizar"
                 textStyle={styles.textStyle}
-                onClick={() => console.log('clicou entrou')}
+                onClick={() => navigation.navigate('LoadingRegister')}
                 opacity={0.1}
               />
             </View>
@@ -76,5 +90,7 @@ export default function Register({navigation}) {
     </Fragment>
   );
 }
+
+export default connect(({cameraModel}) => ({cameraModel}))(Register);
 
 const styles = StyleSheet.create({...stylesData});

@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useEffect} from 'react';
+import React, {Fragment} from 'react';
 import {
   StatusBar,
   Text,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  BackHandler,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import theme from '../../theme/index';
@@ -17,18 +16,6 @@ import Button from '../../components/Button';
 import stylesData from './styles';
 
 export default function Login({navigation}) {
-  const backAction = useCallback(() => {
-    navigation.navigate('Main');
-  }, [navigation]);
-
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
-  }, [backAction]);
   return (
     <Fragment>
       <StatusBar
@@ -48,11 +35,11 @@ export default function Login({navigation}) {
             <View style={styles.actionsContainer}>
               <Input
                 placeholder="E-mail de usuário"
-                placeholderTextColor={theme.colors.grey[75]}
+                placeholderTextColor={theme.colors.grey[95]}
               />
               <Input
                 placeholder="Senha"
-                placeholderTextColor={theme.colors.grey[75]}
+                placeholderTextColor={theme.colors.grey[95]}
                 passwordType
               />
               <Button textStyle={styles.forgotText} title="Esqueceu a senha?" />
