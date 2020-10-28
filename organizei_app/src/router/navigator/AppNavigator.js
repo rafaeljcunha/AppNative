@@ -5,6 +5,7 @@ import MainEntrance from '../../screens/MainEntrance/index';
 import Register from '../../screens/Register/index';
 import Camera from '../../components/RNCamera/index';
 import LoadingRegister from '../../components/LoadingEnterRegister/index';
+import LoadingEnterLogin from '../../components/LoadingEnterLogin/index';
 
 const AppNavigator = Navigator.createStackNavigator({
   Main: {screen: Home, navigationOptions: {title: '', header: () => false}},
@@ -15,6 +16,10 @@ const AppNavigator = Navigator.createStackNavigator({
   },
   Camera: {
     screen: Camera,
+    navigationOptions: {title: '', header: () => false},
+  },
+  LoadingLogin: {
+    screen: LoadingEnterLogin,
     navigationOptions: {title: '', header: () => false},
   },
   LoadingRegister: {

@@ -55,7 +55,7 @@ export default function LoadingRegister({navigation}) {
   const onLoad = () => {
     Animated.timing(opacityImage, {
       toValue: 1,
-      duration: 1000,
+      duration: 200,
       useNativeDriver: true,
     }).start();
   };
@@ -149,14 +149,7 @@ export default function LoadingRegister({navigation}) {
             {count < 90 ? (
               <Text style={styles.waitingMobileText}>Aguarde...</Text>
             ) : (
-              <Animated.Text
-                style={{
-                  ...styles.waitingMobileText,
-                  opacity: opacityImage,
-                  transform: [{scale: opacityInterpolate}],
-                }}>
-                Carregado
-              </Animated.Text>
+              <Text style={styles.waitingMobileText}>Carregado</Text>
             )}
             <View style={styles.progressBar}>
               <View style={contentProgressBar({count, widthProgress})} />
@@ -176,14 +169,7 @@ export default function LoadingRegister({navigation}) {
                 />
               </Fragment>
             ) : (
-              <Animated.Text
-                style={{
-                  ...styles.waitingText,
-                  opacity: opacityImage,
-                  transform: [{scale: opacityInterpolate}],
-                }}>
-                Carregado com sucesso
-              </Animated.Text>
+              <Text style={styles.waitingText}>Carregado com sucesso</Text>
             )}
           </View>
         </View>
